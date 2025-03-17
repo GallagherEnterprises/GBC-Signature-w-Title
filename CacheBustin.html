@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GBC Email Signature Generator</title>
+    <style>
+        /* Hide the job title input box by default */
+        #job_title_container {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>GBC Email Signature Generator</h2>
+    <div>
+        <label for="name">Full Name:</label><br>
+        <input type="text" id="name" name="name" placeholder="Your Name"><br><br>
+
+        <label for="cell_number">Cell Number:</label><br>
+        <input type="text" id="cell_number" name="cell_number" placeholder="C-Your Cell Number"><br><br>
+
+        <label for="email_prefix">Email Prefix (before @):</label><br>
+        <input type="text" id="email_prefix" name="email_prefix" placeholder="Your Email Prefix"><br><br>
+
+        <!-- Include Title Checkbox -->
+        <label>
+            <input type="checkbox" id="include_title" onclick="toggleJobTitle()"> Include Title
+        </label><br><br>
+
+        <!-- Job Title Input (Hidden by Default) -->
+        <div id="job_title_container">
+            <label for="job_title">Job Title:</label><br>
+            <input type="text" id="job_title" name="job_title" placeholder="Your Job Title"><br><br>
+        </div>
+
+        <button onclick="generateSignature()">Generate Signature</button>
+        <button onclick="copyToClipboard()">Copy Signature</button>
+    </div>
+    
+    <h3>Generated Signature:</h3>
+    <div id="signature_output">
+        <!-- Signature will be shown here after user input -->
+    </div>
+
+    <script>
+        // Function to toggle the job title input box
+        function toggleJobTitle() {
+            var jobTitleContainer = document.getElementById('job_title_container');
+            var includeTitleCheckbox = document.getElementById('include_title');
+
+            if (includeTitleCheckbox.checked) {
+                jobTitleContainer.style.display = 'block';
+            } else {
+                jobTitleContainer.style.display = 'none';
+            }
+        }
+
+        // Function to generate the signature
+        function generateSignature() {
+            var name = document.getElementById('name').value;
+            var cell_number = document.getElementById('cell_number').value;
+            var email_prefix = document.getElementById('email_prefix').value;
+            var job_title = document.getElementById('job_title').value;
+
+            // Format the name based on whether a job title is provided
+            var formattedName = name;
+            if (job_title) {
+                formattedName = `${name} - ${job_title}`;
+            }
+
+            var signature = `
+                <table style="font-family: Helvetica, sans-serif; line-height: 1;">
+                    <tr><td style="font-size: 16px; color: #1F4971;">${formattedName}</td></tr>
+                    <tr><td style="font-size: 16px; font-style: oblique; color: #008000; font-weight: bold;">Gallagher Bros. Contractors Ltd.</td></tr>
+                    <tr><td style="font-size: 14.7px; color: #008000;">C-${cell_number}</td></tr>
+                    <tr><td style="font-size: 14.7px; color: #008000;">P-604-531-3156</td></tr>
+                    <tr><td style="font-size: 14.7px; color: #0000FF;">
+                        <span>
+                            <a href="mailto:${email_prefix}@gallagherbros.com" style="text-decoration: none; color: #942193;">${email_prefix}@gallagherbros.com</a>
+                        </span>
+                    </td></tr>
+                </table>
+            `;
+
+            document.getElementById('signature_output').innerHTML = signature;
+        }
+
+        // Function to copy the signature to the clipboard
+        function copyToClipboard() {
+            var signatureHTML = document.getElementById('signature_output').innerHTML;
+            var tempElement = document.createElement("div");
+            tempElement.innerHTML = signatureHTML;
+            document.body.appendChild(tempElement);
+
+            var range = document.createRange();
+            range.selectNode(tempElement);
+            window.getSelection().removeAllRanges();
+            window.getSelection().addRange(range);
+
+            document.execCommand("copy");
+            window.getSelection().removeAllRanges();
+            document.body.removeChild(tempElement);
+            alert("Signature copied to clipboard!");
+        }
+    </script>
+</body>
+</html>
